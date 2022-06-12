@@ -7,7 +7,7 @@ namespace Clases
     public class Local : Servicio
     {
         public int NumeroMesa { get; set; }
-        public Mozo Persona { get; set; }
+        public Mozo Mozo { get; set; }
         public int CantidadComensales { get; set; }
         public static double precioCubierto { get; set; } = 50;
     
@@ -16,10 +16,10 @@ namespace Clases
 
         }
        
-        public Local(int numeroMesa, Mozo persona, int cantidadComensales, Cliente cliente, DateTime fecha) : base(cliente, fecha)
+        public Local(int numeroMesa, Mozo mozo, int cantidadComensales, Cliente cliente, DateTime fecha) : base(cliente, fecha)
         {
             NumeroMesa = numeroMesa;
-            Persona = persona;
+            Mozo = mozo;
             CantidadComensales = cantidadComensales;
         }
 
@@ -38,6 +38,10 @@ namespace Clases
             return precioFinal;
         }
 
-        
+        public override bool EsValido()
+        {
+            return base.EsValido() && NumeroMesa > 0 && Mozo != null && CantidadComensales > 0;
+        }
+
     }
 }

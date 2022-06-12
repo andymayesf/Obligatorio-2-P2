@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Clases.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Clases
 {
-    public abstract class Servicio
+    public abstract class Servicio : IValidacion
     {
+        public static int UltimoID { get; set; } = 1;
+        public int Id { get; set; }
         public Cliente Cliente { get; set; }
         public DateTime Fecha { get; set; }
 
@@ -14,13 +17,18 @@ namespace Clases
         public string Estado { get; set; }
         public Servicio(Cliente cliente, DateTime fecha)
         {
+            Id = UltimoID++;
             Cliente = cliente;
             Fecha = fecha;
             // Cuando creamos un nuevo servicio lo ponemos abierto para que se puedan seguir agregando platos
             Estado = "Abierto";
         }
 
-        public Servicio() { Estado = "Abierto"; }
+        public Servicio()
+        {
+            Id = UltimoID++;
+            Estado = "Abierto";
+        }
 
         public List<CantidadPlato> GetOrden()
         {
@@ -40,20 +48,19 @@ namespace Clases
             {
                 if (!OrdenContienePlato(p))
                 {
-                    CantidadPlato nuevo = new CantidadPlato(p, cantidad);
-                    Orden.Add(nuevo);
+                    Orden.Add(new CantidadPlato(p, cantidad));
                 }
                 else
                 {
                     bool platoEncontrado = false;
                     foreach (CantidadPlato cp in Orden) if (!platoEncontrado)
-                    {
-                        if (cp.Plato.Equals(p))
                         {
-                            cp.Cantidad += cantidad;
-                            platoEncontrado = true;
+                            if (cp.Plato.Equals(p))
+                            {
+                                cp.Cantidad += cantidad;
+                                platoEncontrado = true;
+                            }
                         }
-                    }
                 }
                 ret = true;
             }
@@ -65,15 +72,22 @@ namespace Clases
         {
             bool encontrado = false;
 
-            foreach (CantidadPlato cp in Orden) if (!encontrado) {
-                if (cp.Plato.Equals(p)) {
-                    encontrado = true;
+            foreach (CantidadPlato cp in Orden) if (!encontrado)
+                {
+                    if (cp.Plato.Equals(p))
+                    {
+                        encontrado = true;
+                    }
                 }
-            }
 
             return encontrado;
         }
 
         public abstract double CalcularPrecioFinal();
+
+        public virtual bool EsValido()
+        {
+            return Cliente != null && Fecha <= DateTime.Now;
+        }
     }
 }
