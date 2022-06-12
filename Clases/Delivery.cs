@@ -50,7 +50,5 @@ namespace Clases
         {
             return base.EsValido() && !String.IsNullOrWhiteSpace(DireccionDeEnvio) && Repartidor != null && DistanciaMetros > 0;
         }
-
     }
-    }
-
+}

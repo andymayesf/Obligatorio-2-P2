@@ -37,7 +37,7 @@ namespace Clases
         }
 
         //-------- GETS ----------
-        public List<Persona> GetPersona() { return personas; }
+        public List<Persona> GetPersonas() { return personas; }
 
         public List<Plato> GetPlatos() { return platos; }
 
@@ -143,6 +143,7 @@ namespace Clases
 
 
         //------ CLIENTE ------
+        // Alta de cliente con las validaciones correspondientes
 
         public bool AltaCliente(Cliente c, string user, string password)
         {
@@ -160,6 +161,7 @@ namespace Clases
         }
 
         //------ MOZO ------
+        // Alta de mozo con las validaciones correspondientes
 
         public bool AltaMozo(Mozo m, string user, string password)
         {
@@ -176,7 +178,7 @@ namespace Clases
         }
 
         //------ REPARTIDOR ------
-
+        // Alta de repartidor con las validaciones correspondientes
         public bool AltaRepartidor(Repartidor r, string user, string password)
         {
             bool ret = false;
@@ -193,18 +195,6 @@ namespace Clases
 
         //------ SERVICIO LOCAL ------
         //Agrega servicios locales controlando que los datos pasados sean correctos
-        //public Local AltaServicioLocal(int numeroMesa, Mozo mozo, int cantidadComensales, Cliente cliente, DateTime fecha)
-        //{
-        //    Local nuevo = null;
-
-        //    if (numeroMesa > 0 && mozo != null && cantidadComensales >= 1 && cliente != null && fecha <= DateTime.Now)
-        //    {
-        //        nuevo = new Local(numeroMesa, mozo, cantidadComensales, cliente, fecha);
-        //        servicios.Add(nuevo);
-        //    }
-
-        //    return nuevo;
-        //}
 
         public bool AltaServicioLocal(Local l)
         {
@@ -221,18 +211,6 @@ namespace Clases
 
         //------ SERVICIO DELIVERY ------
         //Agrega servicios delivery controlando que los datos pasados sean correctos. 
-        //public Delivery AltaServicioDelivery(Cliente cliente, DateTime fecha, string direccionDeEnvio, Repartidor repartidor, double distanciaMetros)
-        //{
-        //    Delivery nuevo = null;
-
-        //    if (cliente != null && fecha <= DateTime.Now && !String.IsNullOrEmpty(direccionDeEnvio) && repartidor != null && distanciaMetros > 0)
-        //    {
-        //        nuevo = new Delivery(cliente, fecha, direccionDeEnvio, repartidor, distanciaMetros);
-        //        servicios.Add(nuevo);
-        //    }
-
-        //    return nuevo;
-        //}
         
         public bool AltaServicioDelivery(Delivery d)
         {

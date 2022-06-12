@@ -13,13 +13,12 @@ namespace Clases
 
         public Cliente()
         {
-
+            IdCliente = UltimoId++;
         }
         
         public Cliente(string nombre, string apellido, string email): base(nombre, apellido)
         {
-            IdCliente = UltimoId;
-            UltimoId++;
+            IdCliente = UltimoId++;
             Nombre = nombre;
             Apellido = apellido;
             Email = email;
