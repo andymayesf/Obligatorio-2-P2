@@ -96,6 +96,22 @@ namespace Clases
             return repartidores;
         }
 
+        // Devuelve la persona con Id pasado por parametro
+        public string GetPersonaXId(int? id)
+        {
+            string nombrePersonaBuscada = null;
+
+            foreach(Persona p in personas)
+            {
+                if (p.Id.Equals(id))
+                {
+                    nombrePersonaBuscada = p.Nombre + " " + p.Apellido;
+                }
+            }
+
+            return nombrePersonaBuscada;
+        }
+
         //Devuelve una lista ordenada (usando el CompareTo redefinido en la clase cliente) de clientes
         public List<Cliente> GetClientesPorApellido()
         {
@@ -103,6 +119,15 @@ namespace Clases
             clientesAp.Sort();
             return clientesAp;
         }
+
+        // Devuelve los platos ordenados por nombre de forma ascendente.
+        public List<Plato> GetPlatosPorNombre()
+        {
+            List<Plato> lp = GetPlatos();
+            lp.Sort();
+            return lp;
+        }
+
 
         //Filtra los servicios que son delivery, estan comprendidos en el rango de fechas y corresponden al repartidor con el nombre seleccionado
 
@@ -316,13 +341,13 @@ namespace Clases
             // Precarga Platos
 
             AltaPlato(new Plato("Fideos con tuco", 320));               /*1*/
-            AltaPlato(new Plato("Metro de Pizza", 520));                /*2*/
+            AltaPlato(new Plato("Metro de Pizza", 220));                /*2*/
             AltaPlato(new Plato("Hamburguesa", 450));                   /*3*/
             AltaPlato(new Plato("Papas fritas", 150));                  /*4*/
             AltaPlato(new Plato("Ensalada rusa", 230));                 /*5*/
             AltaPlato(new Plato("Postre de dulce de leche", 160));      /*6*/
             AltaPlato(new Plato("Helado de chocolate", 130));           /*7*/
-            AltaPlato(new Plato("Chivito al pan", 300));                /*8*/
+            AltaPlato(new Plato("Chivito al pan", 400));                /*8*/
             AltaPlato(new Plato("Milanesa de soja", 290));              /*9*/
             AltaPlato(new Plato("Chivito vegetariano", 350));           /*10*/
 
@@ -433,6 +458,22 @@ namespace Clases
             d5.AgregarPlatoOrden(GetPlatos()[3], 2);
             d5.AgregarPlatoOrden(GetPlatos()[4], 5);
             d5.CerrarServicio();
+        }
+
+        // MVC
+        public Persona LogIn(string user, string pass)
+        {
+            Persona p = null;
+
+            foreach(Usuario u in usuarios)
+            {
+                if (u.User.Equals(user) && u.Password.Equals(pass))
+                {
+                    p = u.Persona;
+                }
+            }
+
+            return p;
         }
     }
 }
