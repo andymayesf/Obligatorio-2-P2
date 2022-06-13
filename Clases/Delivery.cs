@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Clases
 {
-    public class Delivery:Servicio
+    public class Delivery : Servicio
     {
         public string DireccionDeEnvio { get;  set; }
         public Repartidor Repartidor { get; set; }
@@ -46,7 +46,9 @@ namespace Clases
             return $"Repartidor: {Repartidor}, Fecha: {Fecha}. ";
         }
 
-
+        public override bool EsValido()
+        {
+            return base.EsValido() && !String.IsNullOrWhiteSpace(DireccionDeEnvio) && Repartidor != null && DistanciaMetros > 0;
+        }
     }
-    }
-
+}

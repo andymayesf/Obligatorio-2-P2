@@ -37,7 +37,7 @@ namespace Clases
         }
 
         //-------- GETS ----------
-        public List<Persona> GetPersona() { return personas; }
+        public List<Persona> GetPersonas() { return personas; }
 
         public List<Plato> GetPlatos() { return platos; }
 
@@ -96,6 +96,22 @@ namespace Clases
             return repartidores;
         }
 
+        // Devuelve la persona con Id pasado por parametro
+        public string GetPersonaXId(int? id)
+        {
+            string nombrePersonaBuscada = null;
+
+            foreach(Persona p in personas)
+            {
+                if (p.Id.Equals(id))
+                {
+                    nombrePersonaBuscada = p.Nombre + " " + p.Apellido;
+                }
+            }
+
+            return nombrePersonaBuscada;
+        }
+
         //Devuelve una lista ordenada (usando el CompareTo redefinido en la clase cliente) de clientes
         public List<Cliente> GetClientesPorApellido()
         {
@@ -103,6 +119,15 @@ namespace Clases
             clientesAp.Sort();
             return clientesAp;
         }
+
+        // Devuelve los platos ordenados por nombre de forma ascendente.
+        public List<Plato> GetPlatosPorNombre()
+        {
+            List<Plato> lp = GetPlatos();
+            lp.Sort();
+            return lp;
+        }
+
 
         //Filtra los servicios que son delivery, estan comprendidos en el rango de fechas y corresponden al repartidor con el nombre seleccionado
 
@@ -128,20 +153,6 @@ namespace Clases
 
         //------ PLATO ------
 
-        //Agrega platos al sistema controlando que los datos ingresados sean correctos (nombre distinto de nulo y precio mayor al precio minimo de plato)
-        //public Plato AltaPlato(string nombre, double precio)
-        //{
-        //    Plato nuevo = null;
-
-        //    if (!String.IsNullOrEmpty(nombre) && precio >= Plato.PrecioMinimo)
-        //    {
-        //        nuevo = new Plato(nombre, precio);
-        //        platos.Add(nuevo);
-        //    }
-
-        //    return nuevo;
-        //}
-
         public bool AltaPlato(Plato p)
         {
             bool ret = false;
@@ -157,20 +168,7 @@ namespace Clases
 
 
         //------ CLIENTE ------
-
-        //Agrega clientes al sistema controlando que los datos cumplan con ciertas restricciones.
-        //public Cliente AltaCliente(string nombre, string apellido, string email, string password)
-        //{
-        //    Cliente nuevo = null;
-
-        //    if (ValidarNombreYApellido(nombre, apellido) && ValidarEmail(email) && ValidarPassword(password))
-        //    {
-        //        nuevo = new Cliente(nombre, apellido, email, password);
-        //        personas.Add(nuevo);
-        //    }
-
-        //    return nuevo;
-        //}
+        // Alta de cliente con las validaciones correspondientes
 
         public bool AltaCliente(Cliente c, string user, string password)
         {
@@ -188,19 +186,7 @@ namespace Clases
         }
 
         //------ MOZO ------
-        //Agrega mozos controlando que nombre y apellido cumplan con las restricciones
-        //public Mozo AltaMozo(string nombre, string apellido)
-        //{
-        //    Mozo nuevo = null;
-
-        //    if (ValidarNombreYApellido(nombre, apellido))
-        //    {
-        //        nuevo = new Mozo(nombre, apellido);
-        //        personas.Add(nuevo);
-        //    }
-
-        //    return nuevo;
-        //}
+        // Alta de mozo con las validaciones correspondientes
 
         public bool AltaMozo(Mozo m, string user, string password)
         {
@@ -217,20 +203,7 @@ namespace Clases
         }
 
         //------ REPARTIDOR ------
-        //Agrega repartidores cumpliendo con las reglas requeridas
-        //public Repartidor AltaRepartidor(string nombre, string apellido, Repartidor.Vehiculo tp)
-        //{
-        //    Repartidor nuevo = null;
-
-        //    if (ValidarNombreYApellido(nombre, apellido))
-        //    {
-        //        nuevo = new Repartidor(nombre, apellido, tp);
-        //        personas.Add(nuevo);
-        //    }
-
-        //    return nuevo;
-        //}
-
+        // Alta de repartidor con las validaciones correspondientes
         public bool AltaRepartidor(Repartidor r, string user, string password)
         {
             bool ret = false;
@@ -247,32 +220,34 @@ namespace Clases
 
         //------ SERVICIO LOCAL ------
         //Agrega servicios locales controlando que los datos pasados sean correctos
-        public Local AltaServicioLocal(int numeroMesa, Mozo mozo, int cantidadComensales, Cliente cliente, DateTime fecha)
-        {
-            Local nuevo = null;
 
-            if (numeroMesa > 0 && mozo != null && cantidadComensales >= 1 && cliente != null && fecha <= DateTime.Now)
+        public bool AltaServicioLocal(Local l)
+        {
+            bool ret = false;
+
+            if (l.EsValido())
             {
-                nuevo = new Local(numeroMesa, mozo, cantidadComensales, cliente, fecha);
-                servicios.Add(nuevo);
+                servicios.Add(l);
+                ret = true;
             }
 
-            return nuevo;
+            return ret;
         }
 
         //------ SERVICIO DELIVERY ------
         //Agrega servicios delivery controlando que los datos pasados sean correctos. 
-        public Delivery AltaServicioDelivery(Cliente cliente, DateTime fecha, string direccionDeEnvio, Repartidor repartidor, double distanciaMetros)
+        
+        public bool AltaServicioDelivery(Delivery d)
         {
-            Delivery nuevo = null;
+            bool ret = false;
 
-            if (cliente != null && fecha <= DateTime.Now && !String.IsNullOrEmpty(direccionDeEnvio) && repartidor != null && distanciaMetros > 0)
+            if (d.EsValido())
             {
-                nuevo = new Delivery(cliente, fecha, direccionDeEnvio, repartidor, distanciaMetros);
-                servicios.Add(nuevo);
+                servicios.Add(d);
+                ret = true;
             }
 
-            return nuevo;
+            return ret;
         }
 
         //-------------------------- VALIDACIONES --------------------------
@@ -360,165 +335,145 @@ namespace Clases
 
 
         //-------- PRECARGA DE DATOS ----------
-        // Realiza la precarga de platos, clientes, mozos, repartidores
+        // Realiza la precarga de platos, clientes, mozos, repartidores y usuarios
         public void PrecargaDatos()
         {
-
-            //######### PRECARGA DE PLATOS ############
             // Precarga Platos
 
-            AltaPlato(new Plato("Fideos con tuco", 320));            /*1*/
-            AltaPlato(new Plato("Metro de Pizza", 520));             /*2*/
-            AltaPlato(new Plato("Hamburguesa", 450));                /*3*/
-            AltaPlato(new Plato("Papas fritas", 150));               /*4*/
-            AltaPlato(new Plato("Ensalada rusa", 230));              /*5*/
-            AltaPlato(new Plato("Postre de dulce de leche", 160));   /*6*/
-            AltaPlato(new Plato("Helado de chocolate", 130));        /*7*/
-            AltaPlato(new Plato("Chivito al pan", 300));             /*8*/
-            AltaPlato(new Plato("Milanesa de soja", 290));           /*9*/
-            AltaPlato(new Plato("Chivito vegetariano", 350));        /*10*/
+            AltaPlato(new Plato("Fideos con tuco", 320));               /*1*/
+            AltaPlato(new Plato("Metro de Pizza", 220));                /*2*/
+            AltaPlato(new Plato("Hamburguesa", 450));                   /*3*/
+            AltaPlato(new Plato("Papas fritas", 150));                  /*4*/
+            AltaPlato(new Plato("Ensalada rusa", 230));                 /*5*/
+            AltaPlato(new Plato("Postre de dulce de leche", 160));      /*6*/
+            AltaPlato(new Plato("Helado de chocolate", 130));           /*7*/
+            AltaPlato(new Plato("Chivito al pan", 400));                /*8*/
+            AltaPlato(new Plato("Milanesa de soja", 290));              /*9*/
+            AltaPlato(new Plato("Chivito vegetariano", 350));           /*10*/
 
-            //Precarga Clientes (string nombre, string apellido, string email, string password) 
+            //Precarga Clientes
 
-            AltaCliente(new Cliente("Elvis", "Presley", "elvispres77@gmail.com"), "epresley", "Elvis35");       /*1*/
-            AltaCliente(new Cliente("Luis", "Miguel", "luismi70@gmail.com"), "lmiguel", "Luismi70");            /*2*/
-            AltaCliente(new Cliente("Katy", "Perry", "katyp84@gmail.com"), "kperry", "Katy84");                 /*3*/
-            AltaCliente(new Cliente("Anuel", "AA", "anuel@adinet.com.uy"), "anuelaa", "Manu123");               /*4*/
-            AltaCliente(new Cliente("Don", "Omar", "domar@gmail.com"), "domar", "AltoCliente5");                /*5*/
-            AltaCliente(new Cliente("Karol", "Giraldo", "karolg@gmail.com"), "kgiraldo", "Cgir123");            /*6*/
-            AltaCliente(new Cliente("Kurt", "Cobain", "curcobain@gmail.com"), "kcobain", "Kurtcob94");          /*7*/
-            AltaCliente(new Cliente("Amy", "Winehouse", "amiwin3@gmail.com"), "awinehouse", "Aminwn2");         /*8*/
-            AltaCliente(new Cliente("Harry", "Styles", "harrsty@hotmail.com"), "hestilos", "Harry10");          /*9*/
-            AltaCliente(new Cliente("Jose", "Balvin", "jbalvin@hotmail.com"), "jbalvin", "Guti15");             /*10*/
+            AltaCliente(new Cliente("Elvis", "Presley", "elvispres77@gmail.com"), "epresley", "Elvis35");           /*1*/
+            AltaCliente(new Cliente("Luis", "Miguel", "luismi70@gmail.com"), "lmiguel", "Luismi70");                /*2*/
+            AltaCliente(new Cliente("Katy", "Perry", "katyp84@gmail.com"), "kperry", "Katy84");                     /*3*/
+            AltaCliente(new Cliente("Anuel", "AA", "anuel@adinet.com.uy"), "anuelaa", "Manu123");                   /*4*/
+            AltaCliente(new Cliente("Don", "Omar", "domar@gmail.com"), "domar", "AltoCliente5");                    /*5*/
+            AltaCliente(new Cliente("Karol", "Giraldo", "karolg@gmail.com"), "kgiraldo", "Cgir123");                /*6*/
+            AltaCliente(new Cliente("Kurt", "Cobain", "curcobain@gmail.com"), "kcobain", "Kurtcob94");              /*7*/
+            AltaCliente(new Cliente("Amy", "Winehouse", "amiwin3@gmail.com"), "awinehouse", "Aminwn2");             /*8*/
+            AltaCliente(new Cliente("Harry", "Styles", "harrsty@hotmail.com"), "hestilos", "Harry10");              /*9*/
+            AltaCliente(new Cliente("Jose", "Balvin", "jbalvin@hotmail.com"), "jbalvin", "Guti15");                 /*10*/
 
-            //Precarga Mozos (nombre, apellido)
+            //Precarga Mozos
 
-            AltaMozo(new Mozo("Mario", "Bros"), "mbros", "maritoB1");             /*1*/
-            AltaMozo(new Mozo("Princesa", "Peach"), "ppeach", "princesaP2");      /*2*/
-            AltaMozo(new Mozo("Toad", "Kinopio"), "tkinopio", "tKinop3");         /*3*/
-            AltaMozo(new Mozo("Coopa", "Troopa"), "ctroopa", "cTroop4");          /*4*/
-            AltaMozo(new Mozo("Bowser", "Elmalo"), "belmalo", "BMalo5");          /*5*/
+            AltaMozo(new Mozo("Mario", "Bros"), "mbros", "maritoB1");               /*1*/
+            AltaMozo(new Mozo("Princesa", "Peach"), "ppeach", "princesaP2");        /*2*/
+            AltaMozo(new Mozo("Toad", "Kinopio"), "tkinopio", "tKinop3");           /*3*/
+            AltaMozo(new Mozo("Coopa", "Troopa"), "ctroopa", "cTroop4");            /*4*/
+            AltaMozo(new Mozo("Bowser", "Elmalo"), "belmalo", "BMalo5");            /*5*/
 
-            //Precarga Repartidores (nombre, apellido, tipo de vehiculo)
+            //Precarga Repartidores 
 
-            AltaRepartidor(new Repartidor("Johnny", "Depp", Repartidor.Vehiculo.Moto), "jdepp", "jDepp1");             /*1*/
-            AltaRepartidor(new Repartidor("Will", "Smith", Repartidor.Vehiculo.Bicicleta), "wsmith", "wSmith2");         /*2*/
-            AltaRepartidor(new Repartidor("Chris", "Rock", Repartidor.Vehiculo.APie), "crock", "cRock3");              /*3*/
-            AltaRepartidor(new Repartidor("Jennifer", "Lopez", Repartidor.Vehiculo.Bicicleta), "jlopez", "jLopez4");     /*4*/
-            AltaRepartidor(new Repartidor("Sandra", "Bullock", Repartidor.Vehiculo.APie), "sbullock", "sBull5");          /*5*/
+            AltaRepartidor(new Repartidor("Johnny", "Depp", Repartidor.Vehiculo.Moto), "jdepp", "jDepp1");                  /*1*/
+            AltaRepartidor(new Repartidor("Will", "Smith", Repartidor.Vehiculo.Bicicleta), "wsmith", "wSmith2");            /*2*/
+            AltaRepartidor(new Repartidor("Chris", "Rock", Repartidor.Vehiculo.APie), "crock", "cRock3");                   /*3*/
+            AltaRepartidor(new Repartidor("Jennifer", "Lopez", Repartidor.Vehiculo.Bicicleta), "jlopez", "jLopez4");        /*4*/
+            AltaRepartidor(new Repartidor("Sandra", "Bullock", Repartidor.Vehiculo.APie), "sbullock", "sBull5");            /*5*/
 
             //Precarga Servicios 
 
             //TIPO LOCAL
 
-            //AltaMozo("Bowser", "Elmalo");   /*5*/
-            //AltaCliente("Elvis", "Presley", "elvispres77@gmail.com", "Elvis35");    /*1*/
-            Local l1 = AltaServicioLocal(8, GetMozos()[4], 3, GetClientes()[0], new DateTime(2022, 01, 25));
-            //AltaPlato("Fideos con tuco", 320);            /*1*/
+            Local l1 = new Local(8, GetMozos()[4], 3, GetClientes()[0], new DateTime(2022, 01, 25));
+            AltaServicioLocal(l1);
             l1.AgregarPlatoOrden(GetPlatos()[0], 1);
-            //AltaPlato("Ensalada rusa", 230);              /*5*/
             l1.AgregarPlatoOrden(GetPlatos()[4], 2);
-            //AltaPlato("Helado de chocolate", 130);        /*7*/
             l1.AgregarPlatoOrden(GetPlatos()[6], 2);
+            l1.CerrarServicio();
 
-            //AltaMozo("Bowser", "Elmalo");   /*5*/
-            //AltaCliente("Luis", "Miguel", "luismi70@gmail.com", "Luismi70");        /*2*/
-            Local l2 = AltaServicioLocal(4, GetMozos()[4], 1, GetClientes()[1], new DateTime(2022, 04, 5));
-            //AltaPlato("Chivito al pan", 300);             /*8*/
+            Local l2 = new Local(4, GetMozos()[4], 1, GetClientes()[1], new DateTime(2022, 04, 5));
+            AltaServicioLocal(l2);
             l2.AgregarPlatoOrden(GetPlatos()[7], 1);
-            //AltaPlato("Helado de chocolate", 130);        /*7*/
             l2.AgregarPlatoOrden(GetPlatos()[6], 1);
-            //AltaPlato("Postre de dulce de leche", 160);   /*6*/
             l2.AgregarPlatoOrden(GetPlatos()[5], 1);
+            l2.CerrarServicio();
 
-            //AltaMozo("Mario", "Bros");      /*1*/
-            //AltaCliente("Katy", "Perry", "katyp84@gmail.com", "Katy84");            /*3*/
-            Local l3 = AltaServicioLocal(3, GetMozos()[0], 3, GetClientes()[2], new DateTime(2022, 02, 2));
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
+            Local l3 = new Local(3, GetMozos()[0], 3, GetClientes()[2], new DateTime(2022, 02, 2));
+            AltaServicioLocal(l3);
             l3.AgregarPlatoOrden(GetPlatos()[1], 2);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             l3.AgregarPlatoOrden(GetPlatos()[3], 2);
+            l3.CerrarServicio();
 
-            //AltaMozo("Coopa", "Troopa");    /*4*/
-            //AltaCliente("Anuel", "AA", "anuel@adinet.com.uy", "Manu123");           /*4*/
-            Local l4 = AltaServicioLocal(1, GetMozos()[3], 5, GetClientes()[3], new DateTime(2021, 03, 12));
-            //AltaPlato("Chivito vegetariano", 350);        /*10*/
+            Local l4 = new Local(1, GetMozos()[3], 5, GetClientes()[3], new DateTime(2021, 03, 12));
+            AltaServicioLocal(l4);
             l4.AgregarPlatoOrden(GetPlatos()[9], 1);
-            //AltaPlato("Milanesa de soja", 290);           /*9*/
             l4.AgregarPlatoOrden(GetPlatos()[8], 1);
-            //AltaPlato("Ensalada rusa", 230);              /*5*/
             l4.AgregarPlatoOrden(GetPlatos()[4], 1);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             l4.AgregarPlatoOrden(GetPlatos()[3], 1);
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
             l4.AgregarPlatoOrden(GetPlatos()[1], 1);
+            l4.CerrarServicio();
 
-            //AltaMozo("Toad", "Kinopio");    /*3*/
-            //AltaCliente("Don", "Omar", "dOmar@asol.com", "AltoCliente5");           /*5*/
-            Local l5 = AltaServicioLocal(5, GetMozos()[2], 2, GetClientes()[4], new DateTime(2022, 01, 14));
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
+            Local l5 = new Local(5, GetMozos()[2], 2, GetClientes()[4], new DateTime(2022, 01, 14));
+            AltaServicioLocal(l5);
             l5.AgregarPlatoOrden(GetPlatos()[1], 2);
+            l5.CerrarServicio();
 
 
 
             //TIPO DELIVERY
-
-            //AltaRepartidor("Will", "Smith", Repartidor.Vehiculo.Bicicleta);         /*2*/
-            //AltaCliente("Luis", "Miguel", "luismi70@gmail.com", "Luismi70");        /*2*/
-            Delivery d1 = AltaServicioDelivery(GetClientes()[1], new DateTime(2022, 4, 22), "Mercedez y Cuareim 123", GetRepartidores()[1], 1400);
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
+            Delivery d1 = new Delivery(GetClientes()[1], new DateTime(2022, 4, 22), "Mercedez y Cuareim 123", GetRepartidores()[1], 1400);
+            AltaServicioDelivery(d1);
             d1.AgregarPlatoOrden(GetPlatos()[1], 2);
-            //AltaPlato("Hamburguesa", 450);                /*3*/
             d1.AgregarPlatoOrden(GetPlatos()[2], 1);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             d1.AgregarPlatoOrden(GetPlatos()[3], 1);
+            d1.CerrarServicio();
 
-            //AltaRepartidor("Sandra", "Bullock", Repartidor.Vehiculo.APie);          /*5*/
-            //AltaCliente("Katy", "Perry", "katyp84@gmail.com", "Katy84");            /*3*/
-            Delivery d2 = AltaServicioDelivery(GetClientes()[2], new DateTime(2022, 3, 5), "Priamo y Rivera 1575", GetRepartidores()[4], 2500);
-            //AltaPlato("Hamburguesa", 450);                /*3*/
+            Delivery d2 = new Delivery(GetClientes()[2], new DateTime(2022, 3, 5), "Priamo y Rivera 1575", GetRepartidores()[4], 2500);
+            AltaServicioDelivery(d2);
             d2.AgregarPlatoOrden(GetPlatos()[2], 3);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             d2.AgregarPlatoOrden(GetPlatos()[4], 2);
-            //AltaPlato("Postre de dulce de leche", 160);   /*6*/
             d2.AgregarPlatoOrden(GetPlatos()[5], 4);
+            d2.CerrarServicio();
 
-            //AltaRepartidor("Sandra", "Bullock", Repartidor.Vehiculo.APie);          /*5*/
-            //AltaCliente("Anuel", "AA", "anuel@adinet.com.uy", "Manu123");           /*4*/
-            Delivery d3 = AltaServicioDelivery(GetClientes()[3], new DateTime(2022, 2, 28), "18 de Julio y Ejido 456", GetRepartidores()[4], 200);
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
+            Delivery d3 = new Delivery(GetClientes()[3], new DateTime(2022, 2, 28), "18 de Julio y Ejido 456", GetRepartidores()[4], 200);
+            AltaServicioDelivery(d3);
             d3.AgregarPlatoOrden(GetPlatos()[1], 1);
-            //AltaPlato("Hamburguesa", 450);                /*3*/
             d3.AgregarPlatoOrden(GetPlatos()[2], 1);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             d3.AgregarPlatoOrden(GetPlatos()[3], 1);
-            //AltaPlato("Ensalada rusa", 230);              /*5*/
             d3.AgregarPlatoOrden(GetPlatos()[4], 1);
-            //AltaPlato("Postre de dulce de leche", 160);   /*6*/
             d3.AgregarPlatoOrden(GetPlatos()[5], 1);
+            d3.CerrarServicio();
 
-            //AltaRepartidor("Chris", "Rock", Repartidor.Vehiculo.APie);              /*3*/
-            //AltaCliente("Don", "Omar", "dOmar@asol.com", "AltoCliente5");           /*5*/
-            Delivery d4 = AltaServicioDelivery(GetClientes()[4], new DateTime(2021, 4, 27), "Bv Artigas y Av Italia 789", GetRepartidores()[2], 4100);
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
+            Delivery d4 = new Delivery(GetClientes()[4], new DateTime(2021, 4, 27), "Bv Artigas y Av Italia 789", GetRepartidores()[2], 4100);
+            AltaServicioDelivery(d4);
             d4.AgregarPlatoOrden(GetPlatos()[1], 2);
-            //AltaPlato("Hamburguesa", 450);                /*3*/
             d4.AgregarPlatoOrden(GetPlatos()[2], 1);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             d4.AgregarPlatoOrden(GetPlatos()[3], 1);
+            d4.CerrarServicio();
 
-            //AltaRepartidor("Jennifer", "Lopez", Repartidor.Vehiculo.Bicicleta);     /*4*/
-            //AltaCliente("Karol", "Giraldo", "karolg@gmail.com", "Cgir123");         /*6*/
-            Delivery d5 = AltaServicioDelivery(GetClientes()[5], new DateTime(2022, 1, 31), "Justicia y Amezaga 159", GetRepartidores()[3], 1200);
-            //AltaPlato("Metro de Pizza", 520);             /*2*/
+            Delivery d5 = new Delivery(GetClientes()[5], new DateTime(2022, 1, 31), "Justicia y Amezaga 159", GetRepartidores()[3], 1200);
+            AltaServicioDelivery(d5);
             d5.AgregarPlatoOrden(GetPlatos()[1], 4);
-            //AltaPlato("Hamburguesa", 450);                /*3*/
             d5.AgregarPlatoOrden(GetPlatos()[2], 3);
-            //AltaPlato("Papas fritas", 150);               /*4*/
             d5.AgregarPlatoOrden(GetPlatos()[3], 2);
-            //AltaPlato("Ensalada rusa", 230);              /*5*/
             d5.AgregarPlatoOrden(GetPlatos()[4], 5);
+            d5.CerrarServicio();
+        }
 
+        // MVC
+        public Persona LogIn(string user, string pass)
+        {
+            Persona p = null;
+
+            foreach(Usuario u in usuarios)
+            {
+                if (u.User.Equals(user) && u.Password.Equals(pass))
+                {
+                    p = u.Persona;
+                }
+            }
+
+            return p;
         }
     }
 }
