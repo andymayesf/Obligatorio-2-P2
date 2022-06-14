@@ -1,0 +1,119 @@
+﻿@model Clases.Servicio
+
+@{
+    ViewData["Title"] = "Pedido";
+}
+
+<h1>Detalles del pedido</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Cliente)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Cliente.Nombre) @Html.DisplayFor(model => model.Cliente.Apellido)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fecha)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fecha)
+        </dd>
+        <dt class="col-sm-2">
+            Precio final
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PrecioFinal)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Estado)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Estado)
+        </dd>
+
+        @if (Model.GetType().Name == "Delivery")
+        {
+            <dt class="col-sm-2">
+                Direccion
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.deli.DireccionDeEnvio
+            </dd>
+            <dt class="col-sm-2">
+                Cadete
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.deli.Repartidor.Nombre @ViewBag.deli.Repartidor.Apellido
+            </dd>
+            <dt class="col-sm-2">
+                Distancia hasta el local (metros)
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.deli.DistanciaMetros
+            </dd>
+        }
+        else
+        {
+            <dt class="col-sm-2">
+                Nro Mesa
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.loc.NumeroMesa
+            </dd>
+            <dt class="col-sm-2">
+                Mozo
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.loc.Mozo.Nombre @ViewBag.loc.Mozo.Apellido
+            </dd>
+            <dt class="col-sm-2">
+                Cantidad de comensales
+            </dt>
+            <dd class="col-sm-10">
+                @ViewBag.loc.CantidadComensales
+            </dd>
+        }
+    </dl>
+</div>
+
+
+<br><br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Plato
+            </th>
+            <th>
+                Precio unitario
+            </th>
+            <th>
+                Cantidad
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Orden)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Plato.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Plato.Precio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-controller="Home" asp-action="Index" >Volver al inicio</a>
+</div>

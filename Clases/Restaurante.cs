@@ -96,36 +96,12 @@ namespace Clases
             return repartidores;
         }
 
-        // Devuelve la persona con Id pasado por parametro
-        public string GetPersonaXId(int? id)
-        {
-            string nombrePersonaBuscada = null;
-
-            foreach(Persona p in personas)
-            {
-                if (p.Id.Equals(id))
-                {
-                    nombrePersonaBuscada = p.Nombre + " " + p.Apellido;
-                }
-            }
-
-            return nombrePersonaBuscada;
-        }
-
         //Devuelve una lista ordenada (usando el CompareTo redefinido en la clase cliente) de clientes
         public List<Cliente> GetClientesPorApellido()
         {
             List<Cliente> clientesAp = GetClientes();
             clientesAp.Sort();
             return clientesAp;
-        }
-
-        // Devuelve los platos ordenados por nombre de forma ascendente.
-        public List<Plato> GetPlatosPorNombre()
-        {
-            List<Plato> lp = GetPlatos();
-            lp.Sort();
-            return lp;
         }
 
 
@@ -380,9 +356,9 @@ namespace Clases
             AltaRepartidor(new Repartidor("Jennifer", "Lopez", Repartidor.Vehiculo.Bicicleta), "jlopez", "jLopez4");        /*4*/
             AltaRepartidor(new Repartidor("Sandra", "Bullock", Repartidor.Vehiculo.APie), "sbullock", "sBull5");            /*5*/
 
-            //Precarga Servicios 
+            //Precarga Servicios
 
-            //TIPO LOCAL
+            //TIPO LOCAL    
 
             Local l1 = new Local(8, GetMozos()[4], 3, GetClientes()[0], new DateTime(2022, 01, 25));
             AltaServicioLocal(l1);
@@ -463,17 +439,216 @@ namespace Clases
         // MVC
         public Persona LogIn(string user, string pass)
         {
-            Persona p = null;
+            Persona pLog = null;
 
             foreach(Usuario u in usuarios)
             {
                 if (u.User.Equals(user) && u.Password.Equals(pass))
                 {
-                    p = u.Persona;
+                    pLog = u.Persona;
                 }
             }
 
-            return p;
+            return pLog;
+        }
+
+        // Devuelve los platos ordenados por nombre de forma ascendente.
+        public List<Plato> GetPlatosPorNombre()
+        {
+            List<Plato> lp = GetPlatos();
+            lp.Sort();
+            return lp;
+        }
+
+
+        // Devuelve la persona con Id pasado por parametro
+        public string GetPersonaXId(int? id)
+        {
+            string nombrePersonaBuscada = null;
+
+            foreach (Persona p in personas)
+            {
+                if (p.Id.Equals(id))
+                {
+                    nombrePersonaBuscada = p.Nombre + " " + p.Apellido;
+                }
+            }
+
+            return nombrePersonaBuscada;
+        }
+
+        // Dar like a un plato seleccionado desde una lista que pasa por binding el Id
+        public void Likear(int idPlato)
+        {
+            Plato p = GetPlatoXId(idPlato);
+            p.Likes++;
+        }
+
+        // Retorna un plato pasandole el id del plato buscado
+        private Plato GetPlatoXId(int idPlato)
+        {
+            Plato buscado = null;
+
+            foreach(Plato p in platos)
+            {
+                if (p.Id.Equals(idPlato))
+                {
+                    buscado = p;
+                }
+            }
+
+            return buscado;
+        }
+
+        // Retorna los servicios de un cliente dado entre fechas marcadas
+        public List<Servicio> GetServiciosClienteEntreFechas(int idPersona, DateTime f1, DateTime f2)
+        {
+            List<Servicio> ret = new List<Servicio>();
+
+            foreach(Servicio s in servicios)
+            {
+                if (s.Cliente.Id.Equals(idPersona))
+                {
+                    if (s.Fecha > f1 && s.Fecha < f2)
+                    {
+                        if (s.Estado == "Cerrado")
+                        {
+                            ret.Add(s);
+                        }
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        // Retorna el servicio pasandole el Id del servicio
+        public Servicio GetServicioXId(int idServicio)
+        {
+            Servicio buscado = null;
+
+            foreach (Servicio s in servicios)
+            {
+                if (s.Id.Equals(idServicio))
+                {
+                    buscado = s;
+                }
+            }
+
+            return buscado;
+        }
+
+        // Retorna los servicios mas caros de la persona pasada por parametro
+        public List<Servicio> GetServiciosMasCaros(int idPers)
+        {
+            List<Servicio> ret = new List<Servicio>();
+            double maxMontoServicios = MontoMaximoDeServicios(idPers);
+
+            foreach(Servicio s in servicios)
+            {
+                if (s.Cliente.Id.Equals(idPers) && s.Estado == "Cerrado")
+                {
+                    if (s.PrecioFinal == maxMontoServicios)
+                    {
+                        ret.Add(s);
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        // Retorna una lista de los servicios de una persona cuyo id de persona es pasado por parametro
+        public double MontoMaximoDeServicios(int idPers)
+        {
+            double max = 0;
+
+            foreach(Servicio s in servicios)
+            {
+                if(s.Cliente.Id.Equals(idPers) && s.Estado == "Cerrado")
+                {
+                    if (s.PrecioFinal > max)
+                    {
+                        max = s.PrecioFinal;
+                    }
+                }
+            }
+
+            return max;
+        }
+
+
+        // Retorna el plato cuyo nombre es pasado por parametro.
+        public Plato GetPlatoXNombre(string nombrePlato)
+        {
+            Plato pBuscado = null;
+
+            foreach(Plato p in platos)
+            {
+                if (p.Nombre.ToLower().Equals(nombrePlato.ToLower()))
+                {
+                    pBuscado = p;
+                }
+            }
+
+            return pBuscado;
+        }
+
+
+        // Retorna los servicios del cliente que contienen el plato cuyo nombre es ingresado por parametro
+        public List<Servicio> ServiciosContienenPlato(Plato p, int idPers)
+        {
+            List<Servicio> ret = new List<Servicio>();
+
+            foreach(Servicio s in servicios)
+            {
+                if (s.Cliente.Id.Equals(idPers))
+                {
+                    if (OrdenContienePlato(s.Orden, p))
+                    {
+                        ret.Add(s);
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        // Retorna un booleano que nos determina si una orden contiene el plato que son pasados por parametros
+        public bool OrdenContienePlato(List<CantidadPlato> orden, Plato p)
+        {
+            bool contiene = false;
+
+            foreach(CantidadPlato cp in orden)
+            {
+                if (cp.Plato.Equals(p))
+                {
+                    contiene = true;
+                }
+            }
+
+            return contiene;
+        }
+
+        // Retorna una lista de todos los servicios de un repartidor cuyo id de persona es pasado por parametro
+        public List<Servicio> GetServiciosDeRepartidor(int idRep)
+        {
+            List<Servicio> ret = new List<Servicio>();
+
+            foreach(Servicio s in servicios)
+            {
+                if (s.GetType().Name.Equals("Delivery"))
+                {
+                    Delivery d = s as Delivery;
+                    
+                    if (d.Repartidor.Id.Equals(idRep))
+                    {
+                        ret.Add(s);
+                    }
+                }
+            }
+
+            return ret;
         }
     }
 }

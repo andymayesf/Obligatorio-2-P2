@@ -11,7 +11,7 @@ namespace Clases
         public int Id { get; set; }
         public Cliente Cliente { get; set; }
         public DateTime Fecha { get; set; }
-
+        public double PrecioFinal { get; set; }
         //Al servicio le pasamos un objeto que contiene el plato pedido y la cantidad 
         public List<CantidadPlato> Orden = new List<CantidadPlato>();
         public string Estado { get; set; }
@@ -37,7 +37,11 @@ namespace Clases
 
         public void CerrarServicio()
         {
-            Estado = "Cerrado";
+            if (Estado == "Abierto")
+            {
+                PrecioFinal = CalcularPrecioFinal();
+                Estado = "Cerrado";
+            }
         }
 
         //Agrega platos y su cantidad a las ordenes tanto locales como delivery

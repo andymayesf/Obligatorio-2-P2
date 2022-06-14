@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Clases.Servicio>
+
+@{
+    ViewData["Title"] = "Mis compras";
+}
+
+<h1>Mis compras</h1>
+<br>
+<form method="post">
+    <label>Fecha inicio</label>
+    <input type="date" name="f1"><br><br>
+    <label>Fecha final</label>
+    <input type="date" name="f2"> <br><br>
+    <input type="submit" value="Buscar" class="btn btn-info">
+</form>
+
+<br><br>
+
+@if (Model != null){
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    Costo final
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrecioFinal)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Ver pedido", "Details", new { idServicio = item.Id })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p>
+        <a asp-action="Create">Hacer nuevo pedido</a>
+    </p>
+} else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}

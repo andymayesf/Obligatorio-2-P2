@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Clases.Servicio>
+
+@{
+    ViewData["Title"] = "Mis entregas";
+}
+
+<h1>Pedidos entregados</h1>
+
+@if(Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PrecioFinal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fecha)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PrecioFinal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+                <td>
+                    @Html.ActionLink("Ver pedido", "Details", "Servicio", new { idServicio = item.Id })
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+} else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}

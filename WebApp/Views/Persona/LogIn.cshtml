@@ -1,18 +1,23 @@
 ﻿<h1>Inicio de sesion</h1>
 <hr />
-<form method="post">
-    <p>Ingrese su usuario y contraseña para ingresar al sistema</p>
-    <label>Usuario: </label>
-    <input type="text" name="user" value="" placeholder="Ingrese el usuario..." />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <p>Ingrese su usuario y contraseña para ingresar al sistema</p>
 
-    <br><br>
-    
-    <label>Contraseña: </label>
-    <input type="password" name="pass" placeholder="Ingrese la contraseña..." />
+            <label class="control-label">Usuario: </label>
+            <input type="text" name="user" class="form-control" value="epresley" placeholder="Ingrese el usuario..." />
 
-    <br><br>
+            <br><br>
 
-    <input type="submit" value="Ingresar" />
-</form>
+            <label class="control-label">Contraseña: </label>
+            <input type="password" name="pass" value="Elvis3" class="form-control" placeholder="Ingrese la contraseña..." />
 
-<p>@ViewBag.msg</p>
+            <br><br>
+
+            <input type="submit" value="Ingresar" class="btn btn-primary" />
+        </form>
+        <br>
+        <p>@ViewBag.msg</p>
+    </div>
+</div>

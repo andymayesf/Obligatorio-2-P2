@@ -41,7 +41,16 @@ namespace WebApp.Controllers
             return View();
         }
 
+        public IActionResult Menu()
+        {
+            return View(r.GetPlatos());
+        }
 
+        public IActionResult Likear(int idPlato)
+        {
+            r.Likear(idPlato);
+            return RedirectToAction("Menu");
+        }
 
     }
 }

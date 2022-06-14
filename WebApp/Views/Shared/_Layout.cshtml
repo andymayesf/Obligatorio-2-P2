@@ -32,9 +32,39 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="AltaCliente">Registrarse</a>
                             </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ListadoPlatos">Menú</a>
+                            </li>
                         }
                         else
                         {
+                            if (Context.Session.GetString("LogueadoRol") == "Cliente")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="Menu">Menú</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Servicio" asp-action="ServiciosClienteEntreFechas">Mis compras</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Servicio" asp-action="MisComprasMasCaras">Compras mas caras</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Servicio" asp-action="ServiciosConPlato">Servicios por plato</a>
+                                </li>
+                            }
+                            else if (Context.Session.GetString("LogueadoRol") == "Repartidor")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Repartidor" asp-action="Index">Mis entregas</a>
+                                </li>
+                            }
+
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Persona" asp-action="LogOut">LogOut</a>
                             </li>
