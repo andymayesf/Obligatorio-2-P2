@@ -45,8 +45,15 @@ namespace WebApp.Controllers
 
         public IActionResult ListadoPlatos()
         {
-            List<Plato> lp = r.GetPlatosPorNombre();
-            return View(lp);
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == null)
+            {
+                List<Plato> lp = r.GetPlatosPorNombre();
+                return View(lp);
+            } else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

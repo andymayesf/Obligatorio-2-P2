@@ -1,0 +1,57 @@
+﻿@model Clases.Local
+
+@{
+    ViewData["Title"] = "CrearServicioLocal";
+}
+
+<h1>Ingrese la cantidad de personas que van a comer en el local</h1>
+
+<hr>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" id="formAltaLocal">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CantidadComensales" class="control-label">Cantidad de comensales</label>
+                <input type="number" id="cantComLocal" value="0" name="cantComensales" class="form-control" />
+                <span id="errorCantCom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear servicio" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>
+    @ViewBag.msg
+</p>
+
+@section Scripts {
+
+    <script>
+
+        document.querySelector("#formAltaLocal").addEventListener('submit', validarDatos);
+
+        function validarDatos(ev) {
+            ev.preventDefault();
+
+            let cant = document.querySelector("#cantComLocal").value;
+            
+            console.log(cant == "")
+
+            if (cant == "") {
+                document.querySelector("#errorCantCom").innerHTML = "Ingrese una cantidad de comensales mayor a 0";
+            } else {
+                if (cant < 1) {
+                    document.querySelector("#errorCantCom").innerHTML = "Ingrese una cantidad de comensales mayor a 0";
+                } else {
+                    document.querySelector("#errorCantCom").innerHTML = "";
+                    this.submit();
+                }
+            }
+        }
+
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

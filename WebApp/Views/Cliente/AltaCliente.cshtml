@@ -4,56 +4,52 @@
     ViewData["Title"] = "AltaCliente";
 }
 
-<h1>AltaCliente</h1>
+<h1>Registro de usuario</h1>
 
 <h4>Cliente</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AltaCliente">
+        <form asp-action="AltaCliente" id="formAltaCliente">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+                <input asp-for="Nombre" id="txtNombre" class="form-control" />
+                <span asp-validation-for="Nombre" id="errorNombre" class="text-danger"></span>
             </div>
-            
-            
+
+
             <div class="form-group">
                 <label asp-for="Apellido" class="control-label"></label>
-                <input asp-for="Apellido" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger"></span>
+                <input asp-for="Apellido" id="txtApellido" class="form-control" />
+                <span asp-validation-for="Apellido" id="errorApellido" class="text-danger"></span>
             </div>
-            
-            
+
+
             <div class="form-group">
                 <label class="control-label">Usuario</label>
-                <input name="user" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger"></span>
+                <input name="user" id="txtUsername" class="form-control" />
+                <span id="errorUsername" class="text-danger"></span>
             </div>
-            
-            
+
+
             <div class="form-group">
                 <label class="control-label">Contraseña</label>
-                <input type="password" name="password" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger"></span>
+                <input type="password" id="txtPassword" name="password" class="form-control" />
+                <span id="errorPassword" class="text-danger"></span>
             </div>
-            
-            
+
+
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <input asp-for="Email" id="txtEmail" class="form-control" />
+                <span asp-validation-for="Email" id="errorEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Registrarse" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 <br />
@@ -63,5 +59,142 @@
 </p>
 
 @section Scripts {
+
+    <script>
+        document.querySelector("#formAltaCliente").addEventListener('submit', validarDatos);
+
+        function validarDatos(ev) {
+
+            ev.preventDefault();
+
+            let nombre = document.querySelector("#txtNombre").value;
+            let apellido = document.querySelector("#txtApellido").value;
+            let email = document.querySelector("#txtEmail").value;
+            let user = document.querySelector("#txtUsername").value;
+            let pass = document.querySelector("#txtPassword").value;
+
+            let nombreValido = false;
+            let apellidoValido = false;
+            let emailValido = false;
+            let userValido = false;
+            let passValido = false;
+
+            if (nombre) {
+                nombreValido = true;
+                document.querySelector("#errorNombre").innerHTML = "";
+            } else {
+                document.querySelector("#errorNombre").innerHTML = "El nombre no puede ser vacío"
+            }
+
+            if (apellido) {
+                apellidoValido = true;
+                document.querySelector("#errorApellido").innerHTML = ""
+            } else {
+                document.querySelector("#errorApellido").innerHTML = "El apellido no puede ser vacío"
+            }
+
+            if (!email) {
+                document.querySelector("#errorEmail").innerHTML = "El Email no puede ser vacío"
+            } else if (email) {
+                let posArroba = posicionArroba(email)
+                if (posArroba == 0 || posArroba == email.length - 1) {
+                    document.querySelector("#errorEmail").innerHTML = "El arroba no puede estar ni en la primera ni ultima posicion del mail"
+                } else if (posicionArroba(email) == -1) {
+                    document.querySelector("#errorEmail").innerHTML = "Debe tener arroba"
+                } else {
+                    emailValido = true;
+                    document.querySelector("#errorEmail").innerHTML = "";
+                }
+            }
+
+            if (user) {
+                userValido = true;
+                document.querySelector("#errorUsername").innerHTML = "";
+            } else {
+                document.querySelector("#errorUsername").innerHTML = "El user no puede ser vacío";
+            }
+
+            if (!pass) { document.querySelector("#errorPassword").innerHTML = "El password no puede ser vacío" } else {
+                if (TieneNum(pass) && TieneMayus(pass) && TieneMinus(pass) && pass.length >= 6) {
+                    passValido = true;
+                    document.querySelector("#errorPassword").innerHTML = "";
+                } else {
+                    if (!TieneNum(pass)) { document.querySelector("#errorPassword").innerHTML = "Debe tener numero. " }
+                    if (!TieneMayus(pass)) { document.querySelector("#errorPassword").innerHTML += "Debe tener mayuscula. " }
+                    if (!TieneMinus(pass)) { document.querySelector("#errorPassword").innerHTML += "Debe tener minuscula. " }
+                    if (pass.length < 6) { document.querySelector("#errorPassword").innerHTML += "Debe tener largo de al menos 6 caracteres. " }
+                }
+            }
+
+
+            if (nombreValido && apellidoValido && emailValido && userValido && passValido) {
+                this.submit();
+            }
+
+        }
+
+        function TieneNum(txt) {
+            let tieneNum = false;
+            let i = 0;
+
+            while (!tieneNum && i < txt.length) {
+                let codAsciiLetra = txt.charCodeAt(i);
+                if (codAsciiLetra >= 48 && codAsciiLetra <= 57) {
+                    tieneNum = true;
+                }
+                i++;
+            }
+            return tieneNum;
+        }
+
+        function TieneMayus(txt) {
+            let tieneMayus = false;
+            let i = 0;
+
+            while (!tieneMayus && i < txt.length) {
+                let codAsciiLetra = txt.charCodeAt(i);
+                if (codAsciiLetra >= 65 && codAsciiLetra <= 90) {
+                    tieneMayus = true;
+                }
+                i++;
+            }
+            return tieneMayus;
+        }
+
+        function TieneMinus(txt) {
+            let tieneMinus = false;
+            let i = 0;
+
+            while (!tieneMinus && i < txt.length) {
+                let codAsciiLetra = txt.charCodeAt(i);
+                if (codAsciiLetra >= 97 && codAsciiLetra <= 122) {
+                    tieneMinus = true;
+                }
+                i++;
+            }
+            return tieneMinus;
+        }
+
+        function posicionArroba(txt) {
+            let tieneArroba = false;
+            let posArroba = -1
+
+            let i = 0;
+
+            while (!tieneArroba && i < txt.length) {
+                let codAsciiLetra = txt.charCodeAt(i);
+                if (codAsciiLetra == 64) {
+                    tieneArroba = true;
+                    posArroba = i;
+                }
+                i++;
+            }
+            return posArroba;
+        }
+
+
+    </script>
+
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

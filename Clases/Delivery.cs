@@ -26,16 +26,17 @@ namespace Clases
         public override double CalcularPrecioFinal()
         {
             double precioFinal = 0;
-            foreach (CantidadPlato cp in Orden) {
-                precioFinal = precioFinal + (cp.Plato.Precio * cp.Cantidad);
+            foreach (CantidadPlato cp in Orden)
+            {
+                precioFinal += cp.Plato.Precio * cp.Cantidad;
             }
 
             if (DistanciaMetros < 2000) {
-                precioFinal = precioFinal + 50;
-            } else if (DistanciaMetros >= 2000 && DistanciaMetros < 7000){
-                precioFinal = precioFinal + 50 + 10 * ((DistanciaMetros - 2000)/1000);
+                precioFinal += 50;
+            } else if (DistanciaMetros < 7000){
+                precioFinal += 50 + 10 * Math.Truncate((DistanciaMetros - 2000)/1000);
             } else { 
-                precioFinal = precioFinal + 100;
+                precioFinal += 100;
             }
             
             return precioFinal;

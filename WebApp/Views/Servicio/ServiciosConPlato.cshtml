@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Clases.Servicio>
+
+@{
+    ViewData["Title"] = "ServiciosConPlato";
+}
+
+<h2>Ingrese el nombre del plato para ver los servicios realizados que contengan ese plato</h2>
+
+<br>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ServiciosConPlato" id="formServiciosPorPlato">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label"><strong>Nombre del plato</strong></label>
+                <input name="nomPlato" id="nombrePlato" class="form-control" placeholder="Tallarines" />
+                <span id="errorPlato" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Buscar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    Precio final
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrecioFinal)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Ver pedido", "Details", new { idServicio = item.Id }, new { @class = "btn btn-primary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}
+
+<script>
+
+    document.querySelector("#formServiciosPorPlato").addEventListener('submit', validarDatos);
+
+    function validarDatos(ev) {
+
+        ev.preventDefault();
+
+        let nombre = document.querySelector("#nombrePlato").value;
+
+        if (nombre) {
+            document.querySelector("#errorPlato").innerHTML = "";
+            this.submit();
+        } else {
+            document.querySelector("#errorPlato").innerHTML = "Ingrese el nombre del plato"
+        }
+
+
+    }
+
+
+</script>

@@ -5,16 +5,17 @@ using System.Text;
 
 namespace Clases
 {
-    public abstract class Servicio : IValidacion
+    public abstract class Servicio : IValidacion, IComparable<Servicio>
     {
         public static int UltimoID { get; set; } = 1;
         public int Id { get; set; }
         public Cliente Cliente { get; set; }
         public DateTime Fecha { get; set; }
-
+        public double PrecioFinal { get; set; }
         //Al servicio le pasamos un objeto que contiene el plato pedido y la cantidad 
         public List<CantidadPlato> Orden = new List<CantidadPlato>();
         public string Estado { get; set; }
+        
         public Servicio(Cliente cliente, DateTime fecha)
         {
             Id = UltimoID++;
@@ -30,39 +31,41 @@ namespace Clases
             Estado = "Abierto";
         }
 
-        public List<CantidadPlato> GetOrden()
-        {
-            return Orden;
-        }
-
         public void CerrarServicio()
         {
-            Estado = "Cerrado";
+            if (Estado == "Abierto")
+            {
+                PrecioFinal = CalcularPrecioFinal();
+                Estado = "Cerrado";
+            }
         }
 
         //Agrega platos y su cantidad a las ordenes tanto locales como delivery
         public bool AgregarPlatoOrden(Plato p, int cantidad)
         {
             bool ret = false;
-            if (cantidad > 0 && p != null)
+            if (Estado.Equals("Abierto"))
             {
-                if (!OrdenContienePlato(p))
+                if (cantidad > 0 && p != null)
                 {
-                    Orden.Add(new CantidadPlato(p, cantidad));
-                }
-                else
-                {
-                    bool platoEncontrado = false;
-                    foreach (CantidadPlato cp in Orden) if (!platoEncontrado)
-                        {
-                            if (cp.Plato.Equals(p))
+                    if (!OrdenContienePlato(p))
+                    {
+                        Orden.Add(new CantidadPlato(p, cantidad));
+                    }
+                    else
+                    {
+                        bool platoEncontrado = false;
+                        foreach (CantidadPlato cp in Orden) if (!platoEncontrado)
                             {
-                                cp.Cantidad += cantidad;
-                                platoEncontrado = true;
+                                if (cp.Plato.Equals(p))
+                                {
+                                    cp.Cantidad += cantidad;
+                                    platoEncontrado = true;
+                                }
                             }
-                        }
+                    }
+                    ret = true;
                 }
-                ret = true;
             }
 
             return ret;
@@ -88,6 +91,11 @@ namespace Clases
         public virtual bool EsValido()
         {
             return Cliente != null && Fecha <= DateTime.Now;
+        }
+
+        public int CompareTo(Servicio other)
+        {
+            return Fecha.CompareTo(other.Fecha) * -1;
         }
     }
 }

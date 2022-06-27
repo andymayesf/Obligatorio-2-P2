@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Clases.Servicio>
+
+@{
+    ViewData["Title"] = "Mis servicios";
+}
+
+<h1>Mis servicios</h1>
+
+<p>
+    <a asp-action="SeleccionarTipoServicio" asp-controller="Servicio">Hacer nuevo pedido</a>
+</p>
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fecha)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+                <td>
+                    @if (item.Estado == "Abierto")
+                    {
+                        @Html.ActionLink("Agregar platos", "AgregarPlatos", "Servicio", new { idServicio = item.Id }, new { @class = "btn btn-primary" }) <span> | </span>
+                        @Html.ActionLink("Cerrar servicio", "CerrarServicio", "Servicio", new { idServicio = item.Id }, new { @class = "btn btn-warning" })
+                    }
+                    else if (item.Estado == "Cerrado")
+                    {
+                        @Html.ActionLink("Ver pedido", "Details", "Servicio", new { idServicio = item.Id }, new { @class = "btn btn-primary" })
+                    }
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+} else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}
+
+
+

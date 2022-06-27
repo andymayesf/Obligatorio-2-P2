@@ -1,0 +1,121 @@
+﻿@model Clases.Servicio
+
+
+<h1>Agregá platos a tu servicio</h1>
+<br>
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="formAddPlato" asp-action="AgregarPlatos" method="post">
+            <input type="hidden" name="idServicio" value="@Model.Id" />
+
+            <label class="control-label"><strong>Plato: </strong></label>
+            <select name="plato" id="selAgregarPlato">
+                <option value="0" disabled selected>Seleccione un plato...</option>
+                @foreach (var item in ViewBag.platos)
+                {
+                    <option value="@item.Nombre">@item.Nombre</option>
+                }
+            </select><br>
+            <span id="errorPlato" class="text-danger"></span><br><br>
+
+            <label class="control-label"><strong>Cantidad: </strong></label>
+            <input type="number" name="cant" value="1" id="cantPlatos"><br>
+            <span id="errorCantidad" class="text-danger"></span><br><br>
+
+            <input type="submit" value="Agregar plato" class="btn btn-primary">
+        </form>
+    </div>
+</div>
+<br>
+<p>
+    @ViewBag.errAgregarPlato
+</p>
+
+<br>
+
+@if (Model.Orden.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Plato
+                </th>
+                <th>
+                    Cantidad
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Orden)
+            {
+                <tr>
+                    <td>
+                        @item.Plato.Nombre
+                    </td>
+                    <td>
+                        @item.Cantidad
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}
+<br />
+<br />
+<br />
+
+<form method="post" asp-action="CerrarServicio">
+    <input type="hidden" name="idServicio" value="@Model.Id" />
+    <input type="submit" value="Cerrar servicio" class="btn btn-warning" />
+</form>
+
+
+@section Scripts {
+
+    <script>
+
+        document.querySelector("#formAddPlato").addEventListener('submit', validarDatos);
+
+        function validarDatos(ev) {
+            ev.preventDefault();
+
+            let plato = document.querySelector("#selAgregarPlato").value;
+            let cant = document.querySelector("#cantPlatos").value;
+
+            let platoValido = false;
+            let cantValido = false;
+
+            if (plato == 0) {
+                document.querySelector("#errorPlato").innerHTML = "Ingrese el plato que quiere añadir.";
+            } else {
+                document.querySelector("#errorPlato").innerHTML = "";
+                platoValido = true;
+            }
+
+            if (cant == "") {
+                document.querySelector("#errorCantidad").innerHTML = "Ingrese una cantidad mayor a 0";
+            } else {
+                if (cant < 1) {
+                    document.querySelector("#errorCantidad").innerHTML = "Ingrese una cantidad mayor a 0";
+                } else {
+                    document.querySelector("#errorCantidad").innerHTML = "";
+                    cantValido = true;
+                }
+            }
+
+            if (platoValido && cantValido) {
+                this.submit();
+            }
+        }
+
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

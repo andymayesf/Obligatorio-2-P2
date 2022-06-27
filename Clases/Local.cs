@@ -23,18 +23,19 @@ namespace Clases
             CantidadComensales = cantidadComensales;
         }
 
-        // Redefinimos el metodo de Servicio para calcular el precio de la orden
 
+        // Redefinimos el metodo de Servicio para calcular el precio de la orden
         public override double CalcularPrecioFinal()
         {
             double precioFinal = 0;
             foreach (CantidadPlato cp in Orden)
             {
-                precioFinal = precioFinal + (cp.Plato.Precio * cp.Cantidad);
+                precioFinal += cp.Plato.Precio * cp.Cantidad;
             }
             
-            precioFinal = precioFinal * 1.1 + precioCubierto * CantidadComensales;
-            
+            precioFinal *= 1.1;
+            precioFinal += precioCubierto * CantidadComensales;
+
             return precioFinal;
         }
 
