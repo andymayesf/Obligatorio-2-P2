@@ -4,11 +4,8 @@
     ViewData["Title"] = "Menu";
 }
 
-<h1>Menu</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Menú</h1>
+<br><br>
 <table class="table">
     <thead>
         <tr>
@@ -38,9 +35,7 @@
             </td>
             
             <td>
-                @Html.ActionLink("Like", "Likear", new { idPlato=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Like", "Likear", new { idPlato=item.Id }, new { @class = "btn btn-primary" }) 
             </td>
         </tr>
 }

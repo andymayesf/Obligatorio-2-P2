@@ -14,16 +14,23 @@ namespace WebApp.Controllers
 
         public IActionResult Index()
         {
-            int idRep = (int)HttpContext.Session.GetInt32("LogueadoId");
-            List<Servicio> misEntregas = r.GetServiciosDeRepartidor(idRep);
-
-            if(misEntregas.Count > 0)
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Repartidor")
             {
-                return View(misEntregas);
+                int idRep = (int)HttpContext.Session.GetInt32("LogueadoId");
+                List<Servicio> misEntregas = r.GetServiciosDeRepartidor(idRep);
+
+                if(misEntregas.Count > 0)
+                {
+                    return View(misEntregas);
+                } else
+                {
+                    ViewBag.msg = "No tiene entregas por el momento";
+                    return View();
+                }
             } else
             {
-                ViewBag.msg = "No tiene entregas por el momento";
-                return View();
+                return RedirectToAction("Index", "Home");
             }
         }
     }

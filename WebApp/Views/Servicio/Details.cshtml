@@ -80,7 +80,8 @@
 </div>
 
 
-<br><br>
+<br>
+<br>
 
 <table class="table">
     <thead>
@@ -94,6 +95,9 @@
             <th>
                 Cantidad
             </th>
+            @*<th>
+                Total plato
+            </th>*@
         </tr>
     </thead>
     <tbody>
@@ -109,11 +113,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Cantidad)
                 </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>*@
             </tr>
         }
     </tbody>
 </table>
 
-<div>
-    <a asp-controller="Home" asp-action="Index" >Volver al inicio</a>
-</div>
+@*@double sum = Model.Orden.Aggregate(0,(accum, curr) => accum + (curr.Plato.Precio * curr.Cantidad));*@

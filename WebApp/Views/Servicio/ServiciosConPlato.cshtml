@@ -10,19 +10,21 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="ServiciosConPlato">
+        <form asp-action="ServiciosConPlato" id="formServiciosPorPlato">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label class="control-label"><strong>Nombre del plato</strong></label>
-                <input name="nomPlato" class="form-control" placeholder="Pasta"/>
+                <input name="nomPlato" id="nombrePlato" class="form-control" placeholder="Tallarines" />
+                <span id="errorPlato" class="text-danger"></span>
             </div>
-            
+
             <div class="form-group">
                 <input type="submit" value="Buscar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
 
 @if (Model != null)
 {
@@ -33,7 +35,7 @@
                     @Html.DisplayNameFor(model => model.Fecha)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PrecioFinal)
+                    Precio final
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Estado)
@@ -55,10 +57,39 @@
                         @Html.DisplayFor(modelItem => item.Estado)
                     </td>
                     <td>
-                        @Html.ActionLink("Details", "Details", new { idServicio = item.Id })
+                        @Html.ActionLink("Ver pedido", "Details", new { idServicio = item.Id }, new { @class = "btn btn-primary" })
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 }
+else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}
+
+<script>
+
+    document.querySelector("#formServiciosPorPlato").addEventListener('submit', validarDatos);
+
+    function validarDatos(ev) {
+
+        ev.preventDefault();
+
+        let nombre = document.querySelector("#nombrePlato").value;
+
+        if (nombre) {
+            document.querySelector("#errorPlato").innerHTML = "";
+            this.submit();
+        } else {
+            document.querySelector("#errorPlato").innerHTML = "Ingrese el nombre del plato"
+        }
+
+
+    }
+
+
+</script>

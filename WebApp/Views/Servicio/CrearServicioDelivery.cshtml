@@ -1,0 +1,54 @@
+﻿@model Clases.Delivery
+
+@{
+    ViewData["Title"] = "CrearServicioDelivery";
+}
+
+<h1>Ingrese la direccion a la que desea enviar el pedido</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" id="formAltaDelivery">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label for="dirEnvio" class="control-label"><strong>Direccion de envio</strong></label>
+                <input name="direccion" id="dirEnvio" class="form-control" />
+                <span asp-validation-for="DireccionDeEnvio" id="errorDir" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>
+    @ViewBag.msg
+</p>
+
+
+@section Scripts {
+
+    <script>
+
+        document.querySelector("#formAltaDelivery").addEventListener('submit', validarDatos);
+
+        function validarDatos(ev) {
+            ev.preventDefault();
+
+            let dir = document.querySelector("#dirEnvio").value;
+
+            console.log(dir == "")
+
+            if (dir == "") {
+                document.querySelector("#errorDir").innerHTML = "Ingrese la direccion del envio.";
+            } else {
+                document.querySelector("#errorDir").innerHTML = "";
+                this.submit();
+            }
+        }
+
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

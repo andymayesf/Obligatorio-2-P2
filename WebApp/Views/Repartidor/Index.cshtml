@@ -36,7 +36,7 @@
                     @Html.DisplayFor(modelItem => item.Estado)
                 </td>
                 <td>
-                    @Html.ActionLink("Ver pedido", "Details", "Servicio", new { idServicio = item.Id })
+                    @Html.ActionLink("Ver pedido", "Details", "Servicio", new { idServicio = item.Id }, new { @class = "btn btn-primary" })
                 </td>
             </tr>
     }

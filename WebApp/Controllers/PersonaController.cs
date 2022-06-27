@@ -19,7 +19,15 @@ namespace WebApp.Controllers
 
         public IActionResult LogIn()
         {
-            return View();
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]

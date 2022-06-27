@@ -23,8 +23,8 @@ namespace Clases
             CantidadComensales = cantidadComensales;
         }
 
-        // Redefinimos el metodo de Servicio para calcular el precio de la orden
 
+        // Redefinimos el metodo de Servicio para calcular el precio de la orden
         public override double CalcularPrecioFinal()
         {
             double precioFinal = 0;

@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewData["Title"] = "SeleccionarTipoServicio";
+}
+
+<h1>Seleccionar tipo del servicio</h1>
+<br>
+<h6>Seleccione si desea pedir para el local o para delivery</h6>
+<br>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" id="formTipoServicio">
+            <label class="control-label"><strong>Tipo de servicio: </strong></label>
+            <select name="tServ" id="selTipo" class="custom-select">
+                <option value="0" selected disabled>Seleccione un tipo</option>
+                <option value="1">Local</option>
+                <option value="2">Delivery</option>
+            </select>
+            <span id="errorTipoServ" class="text-danger"></span>
+            <br><br>
+            <div class="form-group">
+                <input type="submit" value="Pedir" class="btn btn-primary" />
+            </div>
+            <span id="errorSelect"></span>
+        </form>
+    </div>
+</div>
+
+<p>
+    @ViewBag.msg
+</p>
+
+
+
+<script>
+    document.querySelector("#formTipoServicio").addEventListener('submit', validarDatos);
+
+    function validarDatos(ev) {
+
+        ev.preventDefault();
+
+        let tipo = document.querySelector("#selTipo").value;
+
+        if (tipo != 0) {
+            document.querySelector("#errorTipoServ").innerHTML = "";
+            this.submit();
+        } else {
+            document.querySelector("#errorTipoServ").innerHTML = "Elija un tipo de servicio."
+        }
+    }
+
+    function posicionArroba(txt) {
+
+
+        return posArroba;
+    }
+
+
+</script>

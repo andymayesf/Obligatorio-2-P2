@@ -1,0 +1,113 @@
+﻿@model IEnumerable<Clases.Local>
+
+@{
+    ViewData["Title"] = "ServiciosMozoEntreFechas";
+}
+
+<h1>Mis trabajos</h1>
+
+<br>
+
+<form method="post" id="formFechasMozo">
+    <label>Fecha inicio</label>
+    <input type="date" name="f1" id="fchIni"><br>
+    <span id="errorF1" class="text-danger"></span><br><br>
+    <label>Fecha final</label>
+    <input type="date" name="f2" id="fchFin"> <br>
+    <span id="errorF2" class="text-danger"></span><br><br>
+    <input type="submit" value="Buscar" class="btn btn-info">
+</form>
+
+<br>
+<br>
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.NumeroMesa)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CantidadComensales)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fecha)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PrecioFinal)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroMesa)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CantidadComensales)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fecha)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrecioFinal)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Ver pedido", "Details", new { idServicio = item.Id }, new { @class = "btn btn-primary" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>
+        @ViewBag.msg
+    </p>
+}
+
+
+@section Scripts {
+
+    <script>
+
+        document.querySelector("#formFechasMozo").addEventListener('submit', validarDatos);
+
+        function validarDatos(ev) {
+
+            ev.preventDefault();
+
+            let f1 = document.querySelector("#fchIni").value;
+            let f2 = document.querySelector("#fchFin").value;
+
+            let f1Valido = false;
+            let f2Valido = false;
+
+            if (f1 == "") {
+                document.querySelector("#errorF1").innerHTML = "Ingrese una fecha de inicio";
+            } else {
+                f1Valido = true;
+                document.querySelector("#errorF1").innerHTML = "";
+            }
+
+            if (f2 == "") {
+                document.querySelector("#errorF2").innerHTML = "Ingrese una fecha final";
+            } else {
+                f2Valido = true;
+                document.querySelector("#errorF2").innerHTML = "";
+            }
+
+            if (f1Valido && f2Valido) {
+                this.submit();
+            }
+        }
+    </script>
+    
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -13,7 +13,7 @@ namespace Clases
         public string Nombre { get; set; }
         public double Precio { get; set; }
         public int Likes { get; set; }
-        public static double PrecioMinimo { get; set; }  =  120;
+        public static double PrecioMinimo { get; set; }  =  70;
         
         public Plato(string nombre, double precio)
         {

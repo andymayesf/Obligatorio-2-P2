@@ -16,77 +16,296 @@ namespace WebApp.Controllers
             return View();
         }
 
-        public IActionResult ServiciosClienteEntreFechas()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult ServiciosClienteEntreFechas(DateTime f1, DateTime f2)
-        {
-            int idPers = (int)HttpContext.Session.GetInt32("LogueadoId");
-            List<Servicio> comprasEntreFechas = r.GetServiciosClienteEntreFechas(idPers, f1, f2);
-
-            if (comprasEntreFechas.Count > 0)
-            {
-                return View(comprasEntreFechas);
-            }
-            else
-            {
-                ViewBag.msg = "No hay compras en las fechas seleccionadas.";
-                return View();
-            }
-        }
-
         public IActionResult Details(int idServicio)
         {
-            Servicio b = r.GetServicioXId(idServicio);
 
-            if (b.GetType().Name == "Delivery")
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (/*rol == "Cliente"*/rol != null)
             {
-                Delivery d = b as Delivery;
-                ViewBag.deli = d;
-                return View(b);
+                Servicio b = r.GetServicioXId(idServicio);
+
+                int idPersona = (int)HttpContext.Session.GetInt32("LogueadoId");
+                if(r.ServicioEsDePersona(idServicio, idPersona))
+                {
+                    if (b.GetType().Name == "Delivery")
+                    {
+                        Delivery d = b as Delivery;
+                        ViewBag.deli = d;
+                        return View(b);
+                    }
+                    else
+                    {
+                        Local l = b as Local;
+                        ViewBag.loc = l;
+                        return View(b);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
             else
             {
-                Local l = b as Local;
-                ViewBag.loc = l;
-                return View(b);
+                return RedirectToAction("Index", "Home");
             }
+
 
         }
 
-        public IActionResult MisComprasMasCaras()
-        {
-            int idPers = (int)HttpContext.Session.GetInt32("LogueadoId");
-            List<Servicio> serviciosMasCaros = r.GetServiciosMasCaros(idPers);
-
-            if (serviciosMasCaros.Count > 0)
-            {
-                return View(serviciosMasCaros);
-            }
-            else
-            {
-                ViewBag.msg = "No tiene compras a su nombre por el momento";
-                return View();
-            }
-        }
 
         public IActionResult ServiciosConPlato()
         {
-            return View();
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Cliente")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
-        
+
         [HttpPost]
         public IActionResult ServiciosConPlato(string nomPlato)
         {
-            int idPLogueada = (int)HttpContext.Session.GetInt32("LogueadoId");
+            int idLog = (int)HttpContext.Session.GetInt32("LogueadoId");
             Plato plato = r.GetPlatoXNombre(nomPlato);
-            List<Servicio> servsConPlato = r.ServiciosContienenPlato(plato, idPLogueada);
-            return View(servsConPlato);
+
+            if (plato != null)
+            {
+                List<Servicio> servsConPlato = r.ServiciosContienenPlato(plato, idLog);
+                if (servsConPlato.Count > 0)
+                {
+                    return View(servsConPlato);
+                } else
+                {
+                    ViewBag.msg = "No hay compras que incluyan el plato ingresado";
+                    return View();
+                }
+            } else
+            {
+                ViewBag.msg = "No hay compras que incluyan el plato ingresado";
+                return View();
+            }
         }
 
 
+
+
+        public IActionResult ServiciosMozoEntreFechas()
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Mozo")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ServiciosMozoEntreFechas(DateTime f1, DateTime f2)
+        {
+            int idPers = (int)HttpContext.Session.GetInt32("LogueadoId");
+            List<Local> trabajosEntreFechas = r.GetServiciosMozoEntreFechas(idPers, f1, f2);
+
+            if (trabajosEntreFechas.Count > 0)
+            {
+                return View(trabajosEntreFechas);
+            }
+            else
+            {
+                ViewBag.msg = "No hay trabajos en las fechas seleccionadas.";
+                return View();
+            }
+        }
+
+        public IActionResult CrearServicio()
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Cliente")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+
+        public IActionResult SeleccionarTipoServicio()
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Cliente")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SeleccionarTipoServicio(int tServ)
+        {
+            if(tServ == 1) // Tipo local
+            {
+                return RedirectToAction("CrearServicioLocal");  
+            } else if (tServ == 2)
+            {
+                return RedirectToAction("CrearServicioDelivery");
+            }
+            else
+            {
+                ViewBag.msg = "Debe seleccionar un tipo de servicio.";
+                return View();
+            }
+        }
+
+        public IActionResult CrearServicioLocal()
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Cliente")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CrearServicioLocal(int cantComensales)
+        {
+            int idPers = (int)HttpContext.Session.GetInt32("LogueadoId");
+            Cliente c = r.GetClienteXId(idPers);
+
+            if (r.AltaServicioLocal(new Local(new Random().Next(1, 50), r.MozoRandom(), cantComensales, c, DateTime.Now)))
+            {
+                return RedirectToAction("MisServicios", "Cliente");
+            } else
+            {
+                ViewBag.msg = "Ingrese la cantidad de comensales.";
+                return View();
+            }
+
+        }
+        
+        public IActionResult CrearServicioDelivery()
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Cliente")
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CrearServicioDelivery(string direccion)
+        {
+            int idPers = (int)HttpContext.Session.GetInt32("LogueadoId");
+            Cliente c = r.GetClienteXId(idPers);
+            Repartidor rep = r.RepartidorRandom();
+            int distMts = new Random().Next(1, 10000);
+
+
+            if (r.AltaServicioDelivery(new Delivery(c, DateTime.Now,direccion,rep,distMts)))
+            {
+                return RedirectToAction("MisServicios", "Cliente");
+            }
+            else
+            {
+                ViewBag.msg = "Pedido invalido. Ingrese todos los datos.";
+                return View();
+            }
+        }
+
+
+        public IActionResult AgregarPlatos(int idServicio)
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            ViewBag.platos = r.GetPlatos();
+            if (rol == "Cliente")
+            {
+                Servicio s = r.GetServicioXId(idServicio);
+                if (s.Estado.Equals("Abierto"))
+                {
+                    if (s.Orden.Count == 0)
+                    {
+                        ViewBag.msg = "La órden no tiene platos por el momento.";
+                    }
+                
+                    return View(s);
+                } else
+                {
+                    return RedirectToAction("MisServicios", "Cliente");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        
+        [HttpPost]
+        public IActionResult AgregarPlatos(int idServicio, string plato, int cant)
+        {
+            ViewBag.platos = r.GetPlatos();
+            Servicio s = r.GetServicioXId(idServicio);
+
+            if (s.Orden.Count == 0)
+            {
+                ViewBag.msg = "La órden no tiene platos por el momento.";
+            }
+
+            if (plato != null && cant > 0)
+            {
+                Plato p = r.GetPlatoXNombre(plato);
+                s.AgregarPlatoOrden(p, cant);
+                return View(s);
+            } else
+            {
+                ViewBag.errAgregarPlato = "Error de agregado de plato.";
+                return View(s);
+            }
+        }
+
+        public IActionResult CerrarServicio(int idServicio)
+        {
+            string rol = HttpContext.Session.GetString("LogueadoRol");
+            if (rol == "Cliente")
+            {
+                // Que pueda cerrar si el servicio es del que esta logueado
+                int idLog = (int)HttpContext.Session.GetInt32("LogueadoId");
+                if (r.ServicioEsDePersona(idServicio, idLog))
+                {
+                    Servicio s = r.GetServicioXId(idServicio);
+                    s.CerrarServicio();
+                    return RedirectToAction("MisServicios", "Cliente");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+
+        
     }
 }
